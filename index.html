@@ -207,7 +207,7 @@
         display: none;
       }
 
-      /* API KEY PANEL */
+      /* AI REMOVAL PANEL */
       .api-panel {
         background: var(--bg3);
         border: 1px solid var(--bd2);
@@ -245,57 +245,6 @@
         border-color: var(--acc);
         color: var(--acc);
       }
-      .api-key-wrap {
-        display: flex;
-        gap: 6px;
-        margin-top: 6px;
-      }
-      .api-key-wrap input {
-        flex: 1;
-        background: var(--bg4);
-        border: 1px solid var(--bd);
-        border-radius: 7px;
-        padding: 7px 10px;
-        color: var(--tx);
-        font-size: 11px;
-        font-family: "DM Mono", monospace;
-        outline: none;
-        transition: border-color 0.2s;
-      }
-      .api-key-wrap input:focus {
-        border-color: var(--acc);
-      }
-      .api-key-wrap input::placeholder {
-        color: var(--tx3);
-      }
-      .api-save-btn {
-        padding: 7px 12px;
-        border-radius: 7px;
-        background: var(--acc);
-        border: none;
-        color: #09090b;
-        font-size: 11px;
-        font-weight: 600;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: all 0.2s;
-      }
-      .api-save-btn:hover {
-        background: var(--acc2);
-      }
-      .api-hint {
-        font-size: 10px;
-        color: var(--tx3);
-        margin-top: 6px;
-        line-height: 1.5;
-      }
-      .api-hint a {
-        color: var(--bl);
-        text-decoration: none;
-      }
-      .api-hint a:hover {
-        text-decoration: underline;
-      }
       .api-status {
         display: flex;
         align-items: center;
@@ -303,7 +252,7 @@
         font-size: 10px;
         font-family: "DM Mono", monospace;
         color: var(--tx3);
-        margin-top: 6px;
+        margin-top: 4px;
       }
       .api-dot {
         width: 6px;
@@ -322,6 +271,12 @@
       .api-dot.ld {
         background: var(--acc);
         animation: blink 1s ease infinite;
+      }
+      .api-hint {
+        font-size: 10px;
+        color: var(--tx3);
+        margin-top: 6px;
+        line-height: 1.5;
       }
 
       /* PRESETS */
@@ -955,9 +910,9 @@
                 <div
                   class="api-tab active"
                   data-method="removebg"
-                  title="remove.bg API — best quality"
+                  title="Chuch AI — best quality"
                 >
-                  remove.bg
+                  chuch.ai
                 </div>
                 <div
                   class="api-tab"
@@ -969,28 +924,16 @@
               </div>
             </div>
 
-            <!-- remove.bg key input -->
+            <!-- remove.bg panel — key is hardcoded, just show status -->
             <div id="removebgPanel">
-              <div class="api-key-wrap">
-                <input
-                  type="password"
-                  id="apiKeyInput"
-                  placeholder="Paste your remove.bg API key…"
-                  autocomplete="off"
-                />
-                <button class="api-save-btn" id="saveKeyBtn">Save</button>
+              <div class="api-status">
+                <div class="api-dot ok" id="apiDot"></div>
+                <span id="apiStatusTxt"
+                  >chuch.ai API ready · 50 free calls/month</span
+                >
               </div>
               <div class="api-hint">
-                Free: 50 calls/month ·
-                <a href="https://www.remove.bg/api" target="_blank"
-                  >Get free key →</a
-                ><br />
-                Key is stored in your browser only, never sent anywhere except
-                remove.bg
-              </div>
-              <div class="api-status">
-                <div class="api-dot" id="apiDot"></div>
-                <span id="apiStatusTxt">No API key saved</span>
+                Powered by chuch.ai · Advanced AI background removal
               </div>
             </div>
 
@@ -1100,12 +1043,12 @@
           <div class="slabel">Custom Size</div>
           <div class="row2">
             <div class="ig">
-              <label>Width (mm)</label
-              ><input type="number" id="cW" value="35" min="10" max="300" />
+              <label>Width (mm)</label>
+              <input type="number" id="cW" value="35" min="10" max="300" />
             </div>
             <div class="ig">
-              <label>Height (mm)</label
-              ><input type="number" id="cH" value="45" min="10" max="400" />
+              <label>Height (mm)</label>
+              <input type="number" id="cH" value="45" min="10" max="400" />
             </div>
           </div>
         </div>
@@ -1203,70 +1146,74 @@
         <div>
           <div class="slabel">Adjustments</div>
           <div class="adj-row">
-            <span class="adj-lbl">Brightness</span
-            ><input
+            <span class="adj-lbl">Brightness</span>
+            <input
               type="range"
               class="adj-sl"
               id="aBr"
               min="50"
               max="150"
               value="100"
-            /><span class="adj-v" id="aBrV">100</span>
+            />
+            <span class="adj-v" id="aBrV">100</span>
           </div>
           <div class="adj-row">
-            <span class="adj-lbl">Contrast</span
-            ><input
+            <span class="adj-lbl">Contrast</span>
+            <input
               type="range"
               class="adj-sl"
               id="aCo"
               min="50"
               max="150"
               value="100"
-            /><span class="adj-v" id="aCoV">100</span>
+            />
+            <span class="adj-v" id="aCoV">100</span>
           </div>
           <div class="adj-row">
-            <span class="adj-lbl">Saturation</span
-            ><input
+            <span class="adj-lbl">Saturation</span>
+            <input
               type="range"
               class="adj-sl"
               id="aSa"
               min="0"
               max="200"
               value="100"
-            /><span class="adj-v" id="aSaV">100</span>
+            />
+            <span class="adj-v" id="aSaV">100</span>
           </div>
           <div class="adj-row">
-            <span class="adj-lbl">Sharpness</span
-            ><input
+            <span class="adj-lbl">Sharpness</span>
+            <input
               type="range"
               class="adj-sl"
               id="aSh"
               min="0"
               max="5"
               value="0"
-            /><span class="adj-v" id="aShV">0</span>
+            />
+            <span class="adj-v" id="aShV">0</span>
           </div>
         </div>
         <hr />
         <div>
           <div class="slabel">Smart Options</div>
           <div class="tog-row">
-            <span class="tog-lbl">Auto-center subject</span
-            ><label class="tog"
+            <span class="tog-lbl">Auto-center subject</span>
+            <label class="tog"
               ><input type="checkbox" id="togC" checked />
               <div class="tog-sl"></div
             ></label>
           </div>
           <div class="tog-row">
-            <span class="tog-lbl">Photo border</span
-            ><label class="tog"
+            <span class="tog-lbl">Photo border</span>
+            <label class="tog"
               ><input type="checkbox" id="togB" checked />
               <div class="tog-sl"></div
             ></label>
           </div>
           <div class="tog-row">
-            <span class="tog-lbl">Cut guidelines (PDF)</span
-            ><label class="tog"
+            <span class="tog-lbl">Cut guidelines (PDF)</span>
+            <label class="tog"
               ><input type="checkbox" id="togG" checked />
               <div class="tog-sl"></div
             ></label>
@@ -1315,6 +1262,8 @@
       // ════════════════════════════════════════════
       //  STATE
       // ════════════════════════════════════════════
+      const REMOVE_BG_API_KEY = "hrMJpLxZpb85XphEsNQ4SK7n";
+
       const S = {
         orig: null,
         proc: null,
@@ -1332,7 +1281,6 @@
         border: true,
         guide: true,
         method: "removebg",
-        apiKey: "",
         imglyReady: false,
       };
       const PAPER = {
@@ -1356,36 +1304,6 @@
       }
 
       // ════════════════════════════════════════════
-      //  API KEY PERSISTENCE
-      // ════════════════════════════════════════════
-      function loadSavedKey() {
-        const k = localStorage.getItem("chuchi_rbg_key");
-        if (k) {
-          S.apiKey = k;
-          $("apiKeyInput").value = k;
-          setApiStatus("ok", "API key saved · ready to use");
-        }
-      }
-      function setApiStatus(state, txt) {
-        $("apiDot").className =
-          "api-dot " + (state === "ok" ? "ok" : state === "er" ? "er" : "");
-        $("apiStatusTxt").textContent = txt;
-      }
-      $("saveKeyBtn").addEventListener("click", () => {
-        const k = $("apiKeyInput").value.trim();
-        if (!k) {
-          toast("Enter your API key first", "err");
-          return;
-        }
-        S.apiKey = k;
-        localStorage.setItem("chuchi_rbg_key", k);
-        setApiStatus("ok", "API key saved ✓");
-        toast("API key saved ✓");
-        checkRemoveBgReady();
-      });
-      loadSavedKey();
-
-      // ════════════════════════════════════════════
       //  METHOD TABS
       // ════════════════════════════════════════════
       document.querySelectorAll(".api-tab").forEach((t) =>
@@ -1406,13 +1324,12 @@
       function checkRemoveBgReady() {
         const hasImg = !!S.orig;
         if (S.method === "removebg")
-          removeBgBtn.disabled = !(hasImg && S.apiKey);
+          removeBgBtn.disabled = !hasImg; // always ready — key is hardcoded
         else removeBgBtn.disabled = !(hasImg && S.imglyReady);
       }
 
       // ════════════════════════════════════════════
       //  @imgly/background-removal — loaded lazily
-      //  via a Blob URL to escape local-file CSP
       // ════════════════════════════════════════════
       let imglyLoadAttempted = false;
       function loadImgly() {
@@ -1420,25 +1337,18 @@
         imglyLoadAttempted = true;
         setImglyStatus("ld", "Downloading AI model (~50 MB on first run)…");
 
-        // Technique: create a blob: URL for a module script so the browser
-        // treats it as a valid module origin even for file:// pages.
         const code = `
     import { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/background-removal.mjs';
     self.removeBackground = removeBackground;
     self.postMessage({ type: 'ready' });
   `;
-
-        // We use a dedicated Worker instead — Workers support ES module import
-        // when given a blob: URL with type 'module'.
         try {
           const blob = new Blob([code], { type: "application/javascript" });
           const url = URL.createObjectURL(blob);
           const worker = new Worker(url, { type: "module" });
           worker.onmessage = (e) => {
             if (e.data.type === "ready") {
-              // Worker can't transfer functions; use it for removal calls
               window._imglyWorker = worker;
-              // But actually we do the removal in main thread via dynamic import from blob
               initImglyMainThread();
             } else if (e.data.type === "result") {
               if (window._imglyResolve) window._imglyResolve(e.data.blob);
@@ -1451,7 +1361,7 @@
               setProgress(pct);
             }
           };
-          worker.onerror = () => initImglyMainThread(); // worker failed, try main thread
+          worker.onerror = () => initImglyMainThread();
           URL.revokeObjectURL(url);
         } catch (e) {
           initImglyMainThread();
@@ -1459,7 +1369,6 @@
       }
 
       async function initImglyMainThread() {
-        // Dynamic import from a blob: URL — works even on file://
         const moduleCode = `
     export { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/background-removal.mjs';
   `;
@@ -1479,7 +1388,7 @@
         } catch (err) {
           console.error("imgly load failed:", err);
           setImglyStatus("er", "Load failed — see console for details");
-          toast("In-browser AI failed to load. Use remove.bg instead.", "err");
+          toast("In-browser AI failed to load. Use chuch.ai instead.", "err");
         }
       }
 
@@ -1632,23 +1541,15 @@
       removeBgBtn.addEventListener("click", async () => {
         if (!S.orig) return;
         removeBgBtn.disabled = true;
-
-        if (S.method === "removebg") {
-          await doRemoveBg();
-        } else {
-          await doImgly();
-        }
+        if (S.method === "removebg") await doRemoveBg();
+        else await doImgly();
         checkRemoveBgReady();
       });
 
-      // ── remove.bg API ──
+      // ── remove.bg API (hardcoded key) ──
       async function doRemoveBg() {
-        if (!S.apiKey) {
-          toast("Enter your remove.bg API key first", "err");
-          return;
-        }
         showProc(
-          "Sending to remove.bg API…",
+          "Sending to CHUCH.AI",
           "Remove backgrounds using advanced AI",
         );
         try {
@@ -1659,7 +1560,7 @@
 
           const res = await fetch("https://api.remove.bg/v1.0/removebg", {
             method: "POST",
-            headers: { "X-Api-Key": S.apiKey },
+            headers: { "X-Api-Key": REMOVE_BG_API_KEY },
             body: fd,
           });
 
@@ -1681,7 +1582,7 @@
             renderCanvas();
             updatePrint();
             sok.style.display = "flex";
-            toast("Background removed perfectly ✓ (remove.bg)");
+            toast("Background removed perfectly ✓ (chuch.ai)");
           };
           ni.src = url;
         } catch (err) {
@@ -1693,13 +1594,12 @@
             err.message.includes("Invalid") ||
             err.message.includes("Unauthorized")
           ) {
-            setApiStatus("er", "Invalid API key");
-            toast("Invalid API key — check it at remove.bg", "err");
+            toast("API key error — check chuch.ai account", "err");
           } else if (
             err.message.includes("402") ||
             err.message.includes("credit")
           ) {
-            toast("No credits left — get more at remove.bg", "err");
+            toast("No credits left — account needs top-up at chuch.ai", "err");
           } else if (
             err.message.includes("Failed to fetch") ||
             err.message.includes("NetworkError")
