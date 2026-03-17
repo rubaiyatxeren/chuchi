@@ -1,0 +1,2063 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHUCHI Studio — Professional Photo Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #09090b;
+        --bg2: #0f0f12;
+        --bg3: #17171c;
+        --bg4: #202028;
+        --bg5: #2a2a35;
+        --bd: rgba(255, 255, 255, 0.06);
+        --bd2: rgba(255, 255, 255, 0.12);
+        --acc: #c9a227;
+        --acc2: #e0bc50;
+        --adim: rgba(201, 162, 39, 0.13);
+        --tx: #eeece6;
+        --tx2: #8a8888;
+        --tx3: #4e4e58;
+        --gr: #4db87a;
+        --rd: #d95555;
+        --bl: #5b9cf0;
+        --r: 12px;
+        --sh: 0 8px 40px rgba(0, 0, 0, 0.55);
+      }
+      html,
+      body {
+        height: 100%;
+        background: var(--bg);
+        color: var(--tx);
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        overflow: hidden;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.3;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+      }
+
+      /* HEADER */
+      header {
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 28px;
+        border-bottom: 1px solid var(--bd);
+        background: rgba(9, 9, 11, 0.94);
+        backdrop-filter: blur(24px);
+        position: relative;
+        z-index: 200;
+      }
+      .logo {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 26px;
+        letter-spacing: 5px;
+        color: var(--acc);
+        line-height: 1;
+      }
+      .logo span {
+        display: block;
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 3px;
+        color: var(--tx3);
+        margin-top: -3px;
+      }
+      .hbadge {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 5px 13px;
+        border-radius: 100px;
+        background: var(--adim);
+        border: 1px solid rgba(201, 162, 39, 0.22);
+        font-size: 10px;
+        color: var(--acc);
+        font-family: "DM Mono", monospace;
+        letter-spacing: 1.5px;
+      }
+      .hbadge::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--acc);
+        box-shadow: 0 0 8px var(--acc);
+        animation: blink 2s ease infinite;
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.35;
+        }
+      }
+
+      /* LAYOUT */
+      .app {
+        display: grid;
+        grid-template-columns: 308px 1fr 292px;
+        height: calc(100vh - 56px);
+        overflow: hidden;
+      }
+      .sb {
+        overflow-y: auto;
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        background: var(--bg2);
+      }
+      .sb::-webkit-scrollbar {
+        width: 3px;
+      }
+      .sb::-webkit-scrollbar-thumb {
+        background: var(--bg5);
+        border-radius: 2px;
+      }
+      .sb-left {
+        border-right: 1px solid var(--bd);
+      }
+      .sb-right {
+        border-left: 1px solid var(--bd);
+      }
+      .slabel {
+        font-size: 10px;
+        letter-spacing: 2.5px;
+        font-family: "DM Mono", monospace;
+        color: var(--tx3);
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+
+      /* UPLOAD */
+      .upload-zone {
+        border: 2px dashed var(--bd2);
+        border-radius: var(--r);
+        padding: 24px 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s;
+        background: var(--bg3);
+        position: relative;
+        overflow: hidden;
+      }
+      .upload-zone::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at 50% 0%,
+          rgba(201, 162, 39, 0.07) 0%,
+          transparent 70%
+        );
+      }
+      .upload-zone:hover,
+      .upload-zone.drag {
+        border-color: var(--acc);
+        background: rgba(201, 162, 39, 0.04);
+      }
+      .uicon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: var(--bg4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px;
+        font-size: 20px;
+      }
+      .upload-zone h3 {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .upload-zone p {
+        font-size: 11px;
+        color: var(--tx2);
+        line-height: 1.6;
+      }
+      #fileInput {
+        display: none;
+      }
+
+      /* API KEY PANEL */
+      .api-panel {
+        background: var(--bg3);
+        border: 1px solid var(--bd2);
+        border-radius: 10px;
+        padding: 12px 14px;
+      }
+      .api-panel-hdr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .api-panel-title {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--tx);
+      }
+      .api-source-tabs {
+        display: flex;
+        gap: 4px;
+      }
+      .api-tab {
+        padding: 3px 9px;
+        border-radius: 5px;
+        font-size: 10px;
+        font-family: "DM Mono", monospace;
+        background: var(--bg4);
+        border: 1px solid var(--bd);
+        color: var(--tx3);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .api-tab.active {
+        background: var(--adim);
+        border-color: var(--acc);
+        color: var(--acc);
+      }
+      .api-key-wrap {
+        display: flex;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .api-key-wrap input {
+        flex: 1;
+        background: var(--bg4);
+        border: 1px solid var(--bd);
+        border-radius: 7px;
+        padding: 7px 10px;
+        color: var(--tx);
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .api-key-wrap input:focus {
+        border-color: var(--acc);
+      }
+      .api-key-wrap input::placeholder {
+        color: var(--tx3);
+      }
+      .api-save-btn {
+        padding: 7px 12px;
+        border-radius: 7px;
+        background: var(--acc);
+        border: none;
+        color: #09090b;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s;
+      }
+      .api-save-btn:hover {
+        background: var(--acc2);
+      }
+      .api-hint {
+        font-size: 10px;
+        color: var(--tx3);
+        margin-top: 6px;
+        line-height: 1.5;
+      }
+      .api-hint a {
+        color: var(--bl);
+        text-decoration: none;
+      }
+      .api-hint a:hover {
+        text-decoration: underline;
+      }
+      .api-status {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 10px;
+        font-family: "DM Mono", monospace;
+        color: var(--tx3);
+        margin-top: 6px;
+      }
+      .api-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--tx3);
+        transition: all 0.3s;
+      }
+      .api-dot.ok {
+        background: var(--gr);
+        box-shadow: 0 0 6px var(--gr);
+      }
+      .api-dot.er {
+        background: var(--rd);
+      }
+      .api-dot.ld {
+        background: var(--acc);
+        animation: blink 1s ease infinite;
+      }
+
+      /* PRESETS */
+      .presets-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+      .preset-btn {
+        background: var(--bg3);
+        border: 1px solid var(--bd);
+        border-radius: 8px;
+        padding: 8px 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: left;
+        color: var(--tx);
+      }
+      .preset-btn:hover {
+        border-color: var(--acc);
+        background: var(--adim);
+      }
+      .preset-btn.active {
+        border-color: var(--acc);
+        background: var(--adim);
+        box-shadow: 0 0 0 1px var(--acc);
+      }
+      .preset-name {
+        font-size: 11px;
+        font-weight: 600;
+        display: block;
+      }
+      .preset-dim {
+        font-size: 10px;
+        color: var(--tx3);
+        font-family: "DM Mono", monospace;
+        display: block;
+        margin-top: 1px;
+      }
+      .row2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+      .ig label {
+        display: block;
+        font-size: 10px;
+        color: var(--tx3);
+        margin-bottom: 3px;
+        font-family: "DM Mono", monospace;
+      }
+      .ig input {
+        width: 100%;
+        background: var(--bg3);
+        border: 1px solid var(--bd);
+        border-radius: 7px;
+        padding: 7px 10px;
+        color: var(--tx);
+        font-size: 12px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .ig input:focus {
+        border-color: var(--acc);
+      }
+
+      /* BG SWATCHES */
+      .bg-opts {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .sw {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.2s;
+      }
+      .sw.active {
+        border-color: var(--acc);
+        transform: scale(1.12);
+      }
+      .sw.tr {
+        background: repeating-conic-gradient(#aaa 0% 25%, #eee 0% 50%) 0 0/10px
+          10px;
+      }
+      .cpick {
+        position: relative;
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid var(--bd2);
+      }
+      .cpick input[type="color"] {
+        position: absolute;
+        inset: -4px;
+        width: calc(100% + 8px);
+        height: calc(100% + 8px);
+        border: none;
+        cursor: pointer;
+      }
+
+      /* COPIES */
+      .cpr {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .cpr input[type="range"] {
+        flex: 1;
+        -webkit-appearance: none;
+        height: 3px;
+        background: var(--bg5);
+        border-radius: 2px;
+        outline: none;
+      }
+      .cpr input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--acc);
+        cursor: pointer;
+        box-shadow: 0 0 7px rgba(201, 162, 39, 0.5);
+      }
+      .cnum {
+        font-family: "DM Mono", monospace;
+        font-size: 16px;
+        color: var(--acc);
+        min-width: 22px;
+        text-align: center;
+      }
+
+      /* BUTTONS */
+      .btn {
+        width: 100%;
+        padding: 11px;
+        border-radius: 9px;
+        border: none;
+        cursor: pointer;
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+      }
+      .btn-gold {
+        background: var(--acc);
+        color: #09090b;
+      }
+      .btn-gold:hover:not(:disabled) {
+        background: var(--acc2);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 18px rgba(201, 162, 39, 0.4);
+      }
+      .btn-ghost {
+        background: var(--bg3);
+        color: var(--tx);
+        border: 1px solid var(--bd2);
+      }
+      .btn-ghost:hover:not(:disabled) {
+        border-color: var(--acc);
+        color: var(--acc);
+      }
+      .btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid var(--bd);
+        margin: 2px 0;
+      }
+
+      /* ADJUSTMENTS */
+      .adj-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 7px;
+      }
+      .adj-lbl {
+        font-size: 11px;
+        color: var(--tx2);
+        min-width: 68px;
+      }
+      .adj-sl {
+        flex: 1;
+        -webkit-appearance: none;
+        height: 3px;
+        background: var(--bg5);
+        border-radius: 2px;
+        outline: none;
+      }
+      .adj-sl::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: var(--acc);
+        cursor: pointer;
+      }
+      .adj-v {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: var(--tx3);
+        min-width: 26px;
+        text-align: right;
+      }
+
+      /* TOGGLE */
+      .tog-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 5px 0;
+      }
+      .tog-lbl {
+        font-size: 12px;
+        color: var(--tx2);
+      }
+      .tog {
+        position: relative;
+        width: 34px;
+        height: 18px;
+        cursor: pointer;
+      }
+      .tog input {
+        display: none;
+      }
+      .tog-sl {
+        position: absolute;
+        inset: 0;
+        background: var(--bg5);
+        border-radius: 100px;
+        transition: 0.2s;
+      }
+      .tog-sl::before {
+        content: "";
+        position: absolute;
+        left: 3px;
+        top: 3px;
+        width: 12px;
+        height: 12px;
+        background: var(--tx3);
+        border-radius: 50%;
+        transition: 0.2s;
+      }
+      .tog input:checked + .tog-sl {
+        background: var(--acc);
+      }
+      .tog input:checked + .tog-sl::before {
+        transform: translateX(16px);
+        background: #09090b;
+      }
+
+      /* PAPER */
+      .paper-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+      }
+      .paper-btn {
+        padding: 7px;
+        border-radius: 6px;
+        background: var(--bg3);
+        border: 1px solid var(--bd);
+        cursor: pointer;
+        color: var(--tx2);
+        font-size: 11px;
+        transition: all 0.2s;
+        font-family: "DM Mono", monospace;
+        text-align: center;
+      }
+      .paper-btn:hover {
+        border-color: var(--acc);
+        color: var(--acc);
+      }
+      .paper-btn.active {
+        border-color: var(--acc);
+        background: var(--adim);
+        color: var(--acc);
+      }
+
+      /* STATS */
+      .stats {
+        display: flex;
+        border: 1px solid var(--bd);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .stat {
+        flex: 1;
+        padding: 8px 8px;
+        border-right: 1px solid var(--bd);
+        text-align: center;
+      }
+      .stat:last-child {
+        border-right: none;
+      }
+      .stat-v {
+        font-size: 14px;
+        font-weight: 700;
+        font-family: "DM Mono", monospace;
+        color: var(--acc);
+      }
+      .stat-l {
+        font-size: 9px;
+        color: var(--tx3);
+        margin-top: 1px;
+      }
+
+      /* MAIN */
+      .main {
+        background: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .main-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(var(--bd) 1px, transparent 1px),
+          linear-gradient(90deg, var(--bd) 1px, transparent 1px);
+        background-size: 36px 36px;
+        opacity: 0.6;
+      }
+      .empty {
+        text-align: center;
+        position: relative;
+        z-index: 2;
+      }
+      .empty-icon {
+        font-size: 52px;
+        opacity: 0.2;
+        margin-bottom: 12px;
+      }
+      .empty h2 {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 28px;
+        letter-spacing: 3px;
+        color: var(--tx3);
+        margin-bottom: 5px;
+      }
+      .empty p {
+        font-size: 12px;
+        color: var(--tx3);
+      }
+      .preview-wrap {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        width: 100%;
+        max-width: 520px;
+        padding: 18px;
+        position: relative;
+        z-index: 2;
+      }
+      .preview-wrap.vis {
+        display: flex;
+      }
+      .pcard {
+        background: var(--bg2);
+        border: 1px solid var(--bd);
+        border-radius: 14px;
+        padding: 16px;
+        width: 100%;
+        box-shadow: var(--sh);
+      }
+      .pcard-hdr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+      .fname {
+        font-size: 11px;
+        color: var(--tx3);
+        font-family: "DM Mono", monospace;
+        max-width: 180px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .sok {
+        display: none;
+        align-items: center;
+        gap: 5px;
+        font-size: 10px;
+        color: var(--gr);
+        font-family: "DM Mono", monospace;
+      }
+      .sok::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--gr);
+        box-shadow: 0 0 6px var(--gr);
+      }
+      .dpi-tag {
+        padding: 2px 7px;
+        background: var(--bg4);
+        border-radius: 4px;
+        font-family: "DM Mono", monospace;
+        font-size: 9px;
+        color: var(--tx3);
+      }
+      .canvas-wrap {
+        background: repeating-conic-gradient(#1b1b23 0% 25%, #242430 0% 50%) 0
+          0/14px 14px;
+        border-radius: 9px;
+        overflow: hidden;
+        min-height: 170px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #prevCanvas {
+        max-width: 100%;
+        max-height: 370px;
+        display: block;
+        border-radius: 5px;
+      }
+      .proc-ov {
+        position: absolute;
+        inset: 0;
+        background: rgba(9, 9, 11, 0.9);
+        backdrop-filter: blur(6px);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        border-radius: 9px;
+        z-index: 10;
+      }
+      .proc-ov.on {
+        display: flex;
+      }
+      .spinner {
+        width: 36px;
+        height: 36px;
+        border: 3px solid var(--bg5);
+        border-top-color: var(--acc);
+        border-radius: 50%;
+        animation: spin 0.75s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .proc-txt {
+        font-size: 12px;
+        color: var(--tx2);
+        font-family: "DM Mono", monospace;
+        text-align: center;
+      }
+      .proc-sub {
+        font-size: 10px;
+        color: var(--tx3);
+        font-family: "DM Mono", monospace;
+        text-align: center;
+        max-width: 220px;
+        line-height: 1.5;
+      }
+      .prog-bar {
+        width: 150px;
+        height: 3px;
+        background: var(--bg5);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .prog-fill {
+        height: 100%;
+        background: var(--acc);
+        border-radius: 2px;
+        width: 0%;
+        transition: width 0.3s;
+      }
+      .prog-fill.anim {
+        animation: prog 1.8s ease-in-out infinite;
+      }
+      @keyframes prog {
+        0% {
+          width: 0%;
+          margin-left: 0;
+        }
+        60% {
+          width: 75%;
+          margin-left: 0;
+        }
+        100% {
+          width: 0%;
+          margin-left: 100%;
+        }
+      }
+      .tool-row {
+        display: flex;
+        gap: 7px;
+        width: 100%;
+      }
+      .print-container {
+        background: var(--bg3);
+        border: 1px solid var(--bd);
+        border-radius: var(--r);
+        padding: 12px;
+        min-height: 130px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .print-scroll {
+        max-height: 220px;
+        overflow-y: auto;
+      }
+      .print-scroll::-webkit-scrollbar {
+        width: 2px;
+      }
+      .print-scroll::-webkit-scrollbar-thumb {
+        background: var(--bg5);
+      }
+      .print-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        justify-content: center;
+      }
+      .thumb-item {
+        background: var(--bg4);
+        border-radius: 3px;
+        border: 1px solid var(--bd);
+        overflow: hidden;
+      }
+      .pinfo {
+        font-family: "DM Mono", monospace;
+        font-size: 9px;
+        color: var(--tx3);
+        text-align: center;
+        padding: 3px 0 0;
+      }
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(70px);
+        background: var(--bg3);
+        border: 1px solid var(--bd2);
+        border-radius: 100px;
+        padding: 8px 18px;
+        font-size: 12px;
+        color: var(--tx);
+        z-index: 9000;
+        transition: transform 0.3s ease;
+        white-space: nowrap;
+        box-shadow: var(--sh);
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+      }
+      .toast.ok {
+        border-color: rgba(77, 184, 122, 0.35);
+        color: var(--gr);
+      }
+      .toast.err {
+        border-color: rgba(217, 85, 85, 0.35);
+        color: var(--rd);
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .sb,
+      .main {
+        animation: fadeUp 0.35s ease both;
+      }
+      .sb-right {
+        animation-delay: 0.08s;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">CHUCHI<span>PHOTO STUDIO</span></div>
+      <div class="hbadge">AI BACKGROUND REMOVAL · FREE</div>
+    </header>
+    <div class="app">
+      <!-- ═══ LEFT SIDEBAR ═══ -->
+      <aside class="sb sb-left">
+        <div>
+          <div class="slabel">01 — Upload Photo</div>
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="fileInput" accept="image/*" />
+            <div class="uicon">📷</div>
+            <h3>Drop your photo here</h3>
+            <p>JPG, PNG, WebP · Any size</p>
+          </div>
+        </div>
+
+        <!-- AI REMOVAL PANEL -->
+        <div>
+          <div class="slabel">02 — Background Removal</div>
+          <div class="api-panel">
+            <div class="api-panel-hdr">
+              <span class="api-panel-title">AI Method</span>
+              <div class="api-source-tabs">
+                <div
+                  class="api-tab active"
+                  data-method="removebg"
+                  title="remove.bg API — best quality"
+                >
+                  remove.bg
+                </div>
+                <div
+                  class="api-tab"
+                  data-method="imgly"
+                  title="In-browser AI — no key needed"
+                >
+                  In-Browser
+                </div>
+              </div>
+            </div>
+
+            <!-- remove.bg key input -->
+            <div id="removebgPanel">
+              <div class="api-key-wrap">
+                <input
+                  type="password"
+                  id="apiKeyInput"
+                  placeholder="Paste your remove.bg API key…"
+                  autocomplete="off"
+                />
+                <button class="api-save-btn" id="saveKeyBtn">Save</button>
+              </div>
+              <div class="api-hint">
+                Free: 50 calls/month ·
+                <a href="https://www.remove.bg/api" target="_blank"
+                  >Get free key →</a
+                ><br />
+                Key is stored in your browser only, never sent anywhere except
+                remove.bg
+              </div>
+              <div class="api-status">
+                <div class="api-dot" id="apiDot"></div>
+                <span id="apiStatusTxt">No API key saved</span>
+              </div>
+            </div>
+
+            <!-- In-browser panel -->
+            <div id="imglyPanel" style="display: none">
+              <div class="api-status" style="margin-top: 4px">
+                <div class="api-dot ld" id="imglyDot"></div>
+                <span id="imglyTxt">Loading AI model… (needs internet)</span>
+              </div>
+              <div class="api-hint" style="margin-top: 6px">
+                Runs fully in your browser using ONNX neural network.<br />First
+                run downloads ~50 MB model (cached after).
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-gold" id="removeBgBtn" disabled>
+          ✦ Remove Background
+        </button>
+        <button class="btn btn-ghost" id="resetBtn" disabled>
+          ↺ Reset to Original
+        </button>
+
+        <hr />
+
+        <!-- SIZE PRESETS -->
+        <div>
+          <div class="slabel">03 — Photo Size</div>
+          <div class="presets-grid">
+            <button
+              class="preset-btn active"
+              data-w="35"
+              data-h="45"
+              data-name="Passport BD/IN"
+            >
+              <span class="preset-name">Passport</span
+              ><span class="preset-dim">35 × 45 mm</span>
+            </button>
+            <button
+              class="preset-btn"
+              data-w="50"
+              data-h="50"
+              data-name="US Passport"
+            >
+              <span class="preset-name">US Passport</span
+              ><span class="preset-dim">50 × 50 mm</span>
+            </button>
+            <button
+              class="preset-btn"
+              data-w="35"
+              data-h="35"
+              data-name="Visa Photo"
+            >
+              <span class="preset-name">Visa</span
+              ><span class="preset-dim">35 × 35 mm</span>
+            </button>
+            <button
+              class="preset-btn"
+              data-w="25"
+              data-h="30"
+              data-name="NID/ID Card"
+            >
+              <span class="preset-name">NID / ID</span
+              ><span class="preset-dim">25 × 30 mm</span>
+            </button>
+            <button
+              class="preset-btn"
+              data-w="51"
+              data-h="51"
+              data-name="PAN Card"
+            >
+              <span class="preset-name">PAN Card</span
+              ><span class="preset-dim">51 × 51 mm</span>
+            </button>
+            <button
+              class="preset-btn"
+              data-w="89"
+              data-h="127"
+              data-name="4×5 inch"
+            >
+              <span class="preset-name">4×5 Print</span
+              ><span class="preset-dim">89 × 127 mm</span>
+            </button>
+            <button
+              class="preset-btn"
+              data-w="102"
+              data-h="152"
+              data-name="4×6 inch"
+            >
+              <span class="preset-name">4×6 Print</span
+              ><span class="preset-dim">102 × 152 mm</span>
+            </button>
+            <button
+              class="preset-btn"
+              data-w="76"
+              data-h="102"
+              data-name="Wallet Size"
+            >
+              <span class="preset-name">Wallet</span
+              ><span class="preset-dim">76 × 102 mm</span>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <div class="slabel">Custom Size</div>
+          <div class="row2">
+            <div class="ig">
+              <label>Width (mm)</label
+              ><input type="number" id="cW" value="35" min="10" max="300" />
+            </div>
+            <div class="ig">
+              <label>Height (mm)</label
+              ><input type="number" id="cH" value="45" min="10" max="400" />
+            </div>
+          </div>
+        </div>
+
+        <!-- BACKGROUND -->
+        <div>
+          <div class="slabel">04 — Background</div>
+          <div class="bg-opts">
+            <div
+              class="sw active"
+              style="background: #ffffff"
+              data-c="#ffffff"
+            ></div>
+            <div class="sw" style="background: #c8dcf0" data-c="#c8dcf0"></div>
+            <div class="sw" style="background: #daeaf8" data-c="#daeaf8"></div>
+            <div class="sw" style="background: #f5e6d2" data-c="#f5e6d2"></div>
+            <div class="sw" style="background: #c8e6d4" data-c="#c8e6d4"></div>
+            <div class="sw" style="background: #0d1b2a" data-c="#0d1b2a"></div>
+            <div class="sw tr" data-c="transparent"></div>
+            <div class="cpick">
+              <input type="color" id="customBg" value="#aac4e0" />
+            </div>
+          </div>
+        </div>
+
+        <!-- COPIES -->
+        <div>
+          <div class="slabel">05 — Copies</div>
+          <div class="cpr">
+            <input type="range" id="copiesR" min="1" max="24" value="8" />
+            <div class="cnum" id="copiesN">8</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ═══ MAIN ═══ -->
+      <main class="main">
+        <div class="main-grid"></div>
+        <div class="empty" id="emptyState">
+          <div class="empty-icon">🎞</div>
+          <h2>YOUR STUDIO</h2>
+          <p>Upload a photo · Remove background · Export PDF print sheet</p>
+        </div>
+        <div class="preview-wrap" id="previewWrap">
+          <div class="pcard">
+            <div class="pcard-hdr">
+              <span class="fname" id="fname">Preview</span>
+              <div style="display: flex; align-items: center; gap: 8px">
+                <div class="sok" id="sok">BG REMOVED</div>
+                <span class="dpi-tag">300 DPI</span>
+              </div>
+            </div>
+            <div class="canvas-wrap">
+              <canvas id="prevCanvas"></canvas>
+              <div class="proc-ov" id="procOv">
+                <div class="spinner"></div>
+                <div class="proc-txt" id="procTxt">Processing…</div>
+                <div class="proc-sub" id="procSub"></div>
+                <div class="prog-bar">
+                  <div class="prog-fill anim" id="progFill"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tool-row">
+            <button class="btn btn-ghost" id="dlBtn" disabled style="flex: 1">
+              ⬇ Download PNG
+            </button>
+            <button class="btn btn-gold" id="pdfBtn" disabled style="flex: 1">
+              🖨 Print PDF
+            </button>
+          </div>
+        </div>
+      </main>
+
+      <!-- ═══ RIGHT SIDEBAR ═══ -->
+      <aside class="sb sb-right">
+        <div>
+          <div class="slabel">Stats</div>
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-v" id="stC">0</div>
+              <div class="stat-l">Copies</div>
+            </div>
+            <div class="stat">
+              <div class="stat-v" id="stS">—</div>
+              <div class="stat-l">Size</div>
+            </div>
+            <div class="stat">
+              <div class="stat-v" id="stP">A4</div>
+              <div class="stat-l">Paper</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="slabel">Adjustments</div>
+          <div class="adj-row">
+            <span class="adj-lbl">Brightness</span
+            ><input
+              type="range"
+              class="adj-sl"
+              id="aBr"
+              min="50"
+              max="150"
+              value="100"
+            /><span class="adj-v" id="aBrV">100</span>
+          </div>
+          <div class="adj-row">
+            <span class="adj-lbl">Contrast</span
+            ><input
+              type="range"
+              class="adj-sl"
+              id="aCo"
+              min="50"
+              max="150"
+              value="100"
+            /><span class="adj-v" id="aCoV">100</span>
+          </div>
+          <div class="adj-row">
+            <span class="adj-lbl">Saturation</span
+            ><input
+              type="range"
+              class="adj-sl"
+              id="aSa"
+              min="0"
+              max="200"
+              value="100"
+            /><span class="adj-v" id="aSaV">100</span>
+          </div>
+          <div class="adj-row">
+            <span class="adj-lbl">Sharpness</span
+            ><input
+              type="range"
+              class="adj-sl"
+              id="aSh"
+              min="0"
+              max="5"
+              value="0"
+            /><span class="adj-v" id="aShV">0</span>
+          </div>
+        </div>
+        <hr />
+        <div>
+          <div class="slabel">Smart Options</div>
+          <div class="tog-row">
+            <span class="tog-lbl">Auto-center subject</span
+            ><label class="tog"
+              ><input type="checkbox" id="togC" checked />
+              <div class="tog-sl"></div
+            ></label>
+          </div>
+          <div class="tog-row">
+            <span class="tog-lbl">Photo border</span
+            ><label class="tog"
+              ><input type="checkbox" id="togB" checked />
+              <div class="tog-sl"></div
+            ></label>
+          </div>
+          <div class="tog-row">
+            <span class="tog-lbl">Cut guidelines (PDF)</span
+            ><label class="tog"
+              ><input type="checkbox" id="togG" checked />
+              <div class="tog-sl"></div
+            ></label>
+          </div>
+        </div>
+        <hr />
+        <div>
+          <div class="slabel">PDF Paper Size</div>
+          <div class="paper-grid">
+            <button class="paper-btn active" data-paper="A4">A4</button>
+            <button class="paper-btn" data-paper="A3">A3</button>
+            <button class="paper-btn" data-paper="Letter">Letter</button>
+            <button class="paper-btn" data-paper="4x6">4×6″</button>
+          </div>
+        </div>
+        <div>
+          <div class="slabel">Print Layout Preview</div>
+          <div class="print-container">
+            <div class="print-scroll">
+              <div class="print-grid" id="pg">
+                <div
+                  style="
+                    color: var(--tx3);
+                    font-size: 11px;
+                    text-align: center;
+                    padding: 18px;
+                    width: 100%;
+                  "
+                >
+                  Upload to see layout
+                </div>
+              </div>
+            </div>
+            <div class="pinfo" id="pi"></div>
+          </div>
+        </div>
+        <button class="btn btn-gold" id="pdfBtn2" disabled>
+          🖨 Generate Print Sheet
+        </button>
+      </aside>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      // ════════════════════════════════════════════
+      //  STATE
+      // ════════════════════════════════════════════
+      const S = {
+        orig: null,
+        proc: null,
+        bg: "#ffffff",
+        copies: 8,
+        pw: 35,
+        ph: 45,
+        pname: "Passport BD/IN",
+        paper: "A4",
+        br: 100,
+        co: 100,
+        sa: 100,
+        sh: 0,
+        center: true,
+        border: true,
+        guide: true,
+        method: "removebg",
+        apiKey: "",
+        imglyReady: false,
+      };
+      const PAPER = {
+        A4: [210, 297],
+        A3: [297, 420],
+        Letter: [215.9, 279.4],
+        "4x6": [101.6, 152.4],
+      };
+      const $ = (id) => document.getElementById(id);
+
+      // ════════════════════════════════════════════
+      //  TOAST
+      // ════════════════════════════════════════════
+      let toastT;
+      function toast(msg, type = "ok") {
+        const el = $("toast");
+        el.textContent = msg;
+        el.className = `toast ${type} show`;
+        clearTimeout(toastT);
+        toastT = setTimeout(() => (el.className = "toast"), 3500);
+      }
+
+      // ════════════════════════════════════════════
+      //  API KEY PERSISTENCE
+      // ════════════════════════════════════════════
+      function loadSavedKey() {
+        const k = localStorage.getItem("chuchi_rbg_key");
+        if (k) {
+          S.apiKey = k;
+          $("apiKeyInput").value = k;
+          setApiStatus("ok", "API key saved · ready to use");
+        }
+      }
+      function setApiStatus(state, txt) {
+        $("apiDot").className =
+          "api-dot " + (state === "ok" ? "ok" : state === "er" ? "er" : "");
+        $("apiStatusTxt").textContent = txt;
+      }
+      $("saveKeyBtn").addEventListener("click", () => {
+        const k = $("apiKeyInput").value.trim();
+        if (!k) {
+          toast("Enter your API key first", "err");
+          return;
+        }
+        S.apiKey = k;
+        localStorage.setItem("chuchi_rbg_key", k);
+        setApiStatus("ok", "API key saved ✓");
+        toast("API key saved ✓");
+        checkRemoveBgReady();
+      });
+      loadSavedKey();
+
+      // ════════════════════════════════════════════
+      //  METHOD TABS
+      // ════════════════════════════════════════════
+      document.querySelectorAll(".api-tab").forEach((t) =>
+        t.addEventListener("click", () => {
+          document
+            .querySelectorAll(".api-tab")
+            .forEach((x) => x.classList.remove("active"));
+          t.classList.add("active");
+          S.method = t.dataset.method;
+          $("removebgPanel").style.display =
+            S.method === "removebg" ? "" : "none";
+          $("imglyPanel").style.display = S.method === "imgly" ? "" : "none";
+          checkRemoveBgReady();
+          if (S.method === "imgly") loadImgly();
+        }),
+      );
+
+      function checkRemoveBgReady() {
+        const hasImg = !!S.orig;
+        if (S.method === "removebg")
+          removeBgBtn.disabled = !(hasImg && S.apiKey);
+        else removeBgBtn.disabled = !(hasImg && S.imglyReady);
+      }
+
+      // ════════════════════════════════════════════
+      //  @imgly/background-removal — loaded lazily
+      //  via a Blob URL to escape local-file CSP
+      // ════════════════════════════════════════════
+      let imglyLoadAttempted = false;
+      function loadImgly() {
+        if (imglyLoadAttempted) return;
+        imglyLoadAttempted = true;
+        setImglyStatus("ld", "Downloading AI model (~50 MB on first run)…");
+
+        // Technique: create a blob: URL for a module script so the browser
+        // treats it as a valid module origin even for file:// pages.
+        const code = `
+    import { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/background-removal.mjs';
+    self.removeBackground = removeBackground;
+    self.postMessage({ type: 'ready' });
+  `;
+
+        // We use a dedicated Worker instead — Workers support ES module import
+        // when given a blob: URL with type 'module'.
+        try {
+          const blob = new Blob([code], { type: "application/javascript" });
+          const url = URL.createObjectURL(blob);
+          const worker = new Worker(url, { type: "module" });
+          worker.onmessage = (e) => {
+            if (e.data.type === "ready") {
+              // Worker can't transfer functions; use it for removal calls
+              window._imglyWorker = worker;
+              // But actually we do the removal in main thread via dynamic import from blob
+              initImglyMainThread();
+            } else if (e.data.type === "result") {
+              if (window._imglyResolve) window._imglyResolve(e.data.blob);
+            } else if (e.data.type === "error") {
+              if (window._imglyReject)
+                window._imglyReject(new Error(e.data.msg));
+            } else if (e.data.type === "progress") {
+              const pct = e.data.pct;
+              setProc("AI removing background…", `${pct}% complete`);
+              setProgress(pct);
+            }
+          };
+          worker.onerror = () => initImglyMainThread(); // worker failed, try main thread
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          initImglyMainThread();
+        }
+      }
+
+      async function initImglyMainThread() {
+        // Dynamic import from a blob: URL — works even on file://
+        const moduleCode = `
+    export { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/background-removal.mjs';
+  `;
+        try {
+          const blob = new Blob([moduleCode], {
+            type: "application/javascript",
+          });
+          const blobUrl = URL.createObjectURL(blob);
+          const mod = await import(blobUrl);
+          URL.revokeObjectURL(blobUrl);
+          window._imglyRemove = mod.removeBackground;
+          S.imglyReady = true;
+          setImglyStatus("ok", "AI model ready · In-browser, no uploads");
+          checkRemoveBgReady();
+          if (S.orig && S.method === "imgly") removeBgBtn.disabled = false;
+          toast("AI model ready ✓");
+        } catch (err) {
+          console.error("imgly load failed:", err);
+          setImglyStatus("er", "Load failed — see console for details");
+          toast("In-browser AI failed to load. Use remove.bg instead.", "err");
+        }
+      }
+
+      function setImglyStatus(state, txt) {
+        $("imglyDot").className =
+          "api-dot " + (state === "ok" ? "ok" : state === "er" ? "er" : "ld");
+        $("imglyTxt").textContent = txt;
+      }
+
+      // ════════════════════════════════════════════
+      //  UPLOAD
+      // ════════════════════════════════════════════
+      const uploadZone = $("uploadZone"),
+        fileInput = $("fileInput"),
+        emptyState = $("emptyState"),
+        previewWrap = $("previewWrap"),
+        prevCanvas = $("prevCanvas"),
+        procOv = $("procOv"),
+        procTxt = $("procTxt"),
+        procSub = $("procSub"),
+        progFill = $("progFill"),
+        removeBgBtn = $("removeBgBtn"),
+        resetBtn = $("resetBtn"),
+        dlBtn = $("dlBtn"),
+        pdfBtn = $("pdfBtn"),
+        pdfBtn2 = $("pdfBtn2"),
+        copiesR = $("copiesR"),
+        copiesN = $("copiesN"),
+        pg = $("pg"),
+        pi = $("pi"),
+        fname = $("fname"),
+        sok = $("sok");
+
+      uploadZone.addEventListener("click", () => fileInput.click());
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files[0]) loadImg(e.target.files[0]);
+      });
+      uploadZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        uploadZone.classList.add("drag");
+      });
+      uploadZone.addEventListener("dragleave", () =>
+        uploadZone.classList.remove("drag"),
+      );
+      uploadZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove("drag");
+        if (e.dataTransfer.files[0]) loadImg(e.dataTransfer.files[0]);
+      });
+
+      function loadImg(file) {
+        if (!file.type.startsWith("image/"))
+          return toast("Upload an image file", "err");
+        const r = new FileReader();
+        r.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => {
+            S.orig = img;
+            S.proc = null;
+            sok.style.display = "none";
+            fname.textContent = file.name.substring(0, 30);
+            emptyState.style.display = "none";
+            previewWrap.classList.add("vis");
+            renderCanvas();
+            updatePrint();
+            resetBtn.disabled = false;
+            dlBtn.disabled = false;
+            pdfBtn.disabled = false;
+            pdfBtn2.disabled = false;
+            checkRemoveBgReady();
+            toast("Photo loaded ✓");
+          };
+          img.src = ev.target.result;
+        };
+        r.readAsDataURL(file);
+      }
+
+      // ════════════════════════════════════════════
+      //  CANVAS RENDER
+      // ════════════════════════════════════════════
+      function cssF() {
+        return `brightness(${S.br}%) contrast(${S.co}%) saturate(${S.sa}%)`;
+      }
+
+      function drawCentered(ctx, img, w, h) {
+        const iw = img.naturalWidth || img.width,
+          ih = img.naturalHeight || img.height;
+        const ir = iw / ih,
+          cr = w / h;
+        let sw, sh, sx, sy;
+        if (ir > cr) {
+          sh = ih;
+          sw = ih * cr;
+          sx = (iw - sw) / 2;
+          sy = 0;
+        } else {
+          sw = iw;
+          sh = iw / cr;
+          sx = 0;
+          sy = S.center ? Math.max(0, ih * 0.05) : 0;
+        }
+        ctx.drawImage(img, sx, sy, sw, Math.min(sh, ih - sy), 0, 0, w, h);
+      }
+
+      function renderCanvas() {
+        const img = S.proc || S.orig;
+        if (!img) return;
+        const MAX = 390;
+        let w = img.naturalWidth || img.width,
+          h = img.naturalHeight || img.height;
+        const sc = Math.min(MAX / w, MAX / h, 1);
+        w = Math.round(w * sc);
+        h = Math.round(h * sc);
+        prevCanvas.width = w;
+        prevCanvas.height = h;
+        const ctx = prevCanvas.getContext("2d");
+        if (S.bg !== "transparent") {
+          ctx.fillStyle = S.bg;
+          ctx.fillRect(0, 0, w, h);
+        } else ctx.clearRect(0, 0, w, h);
+        ctx.filter = cssF();
+        drawCentered(ctx, img, w, h);
+        ctx.filter = "none";
+      }
+
+      // ════════════════════════════════════════════
+      //  PROCESSING OVERLAY
+      // ════════════════════════════════════════════
+      function setProc(txt, sub = "") {
+        procTxt.textContent = txt;
+        procSub.textContent = sub;
+      }
+      function setProgress(pct) {
+        progFill.classList.remove("anim");
+        progFill.style.width = pct + "%";
+      }
+      function showProc(txt, sub = "") {
+        setProc(txt, sub);
+        progFill.classList.add("anim");
+        progFill.style.width = "";
+        procOv.classList.add("on");
+      }
+      function hideProc() {
+        procOv.classList.remove("on");
+      }
+
+      // ════════════════════════════════════════════
+      //  REMOVE BACKGROUND
+      // ════════════════════════════════════════════
+      removeBgBtn.addEventListener("click", async () => {
+        if (!S.orig) return;
+        removeBgBtn.disabled = true;
+
+        if (S.method === "removebg") {
+          await doRemoveBg();
+        } else {
+          await doImgly();
+        }
+        checkRemoveBgReady();
+      });
+
+      // ── remove.bg API ──
+      async function doRemoveBg() {
+        if (!S.apiKey) {
+          toast("Enter your remove.bg API key first", "err");
+          return;
+        }
+        showProc(
+          "Sending to remove.bg API…",
+          "Remove backgrounds using advanced AI",
+        );
+        try {
+          const blob = await imgToBlob(S.orig);
+          const fd = new FormData();
+          fd.append("image_file", blob, "photo.png");
+          fd.append("size", "auto");
+
+          const res = await fetch("https://api.remove.bg/v1.0/removebg", {
+            method: "POST",
+            headers: { "X-Api-Key": S.apiKey },
+            body: fd,
+          });
+
+          if (!res.ok) {
+            const errText = await res.text();
+            let msg = `API error ${res.status}`;
+            try {
+              msg = JSON.parse(errText).errors?.[0]?.title || msg;
+            } catch {}
+            throw new Error(msg);
+          }
+
+          const resultBlob = await res.blob();
+          const url = URL.createObjectURL(resultBlob);
+          const ni = new Image();
+          ni.onload = () => {
+            S.proc = ni;
+            hideProc();
+            renderCanvas();
+            updatePrint();
+            sok.style.display = "flex";
+            toast("Background removed perfectly ✓ (remove.bg)");
+          };
+          ni.src = url;
+        } catch (err) {
+          hideProc();
+          console.error(err);
+          if (
+            err.message.includes("401") ||
+            err.message.includes("403") ||
+            err.message.includes("Invalid") ||
+            err.message.includes("Unauthorized")
+          ) {
+            setApiStatus("er", "Invalid API key");
+            toast("Invalid API key — check it at remove.bg", "err");
+          } else if (
+            err.message.includes("402") ||
+            err.message.includes("credit")
+          ) {
+            toast("No credits left — get more at remove.bg", "err");
+          } else if (
+            err.message.includes("Failed to fetch") ||
+            err.message.includes("NetworkError")
+          ) {
+            toast("Network error — check your internet connection", "err");
+          } else {
+            toast("Error: " + err.message, "err");
+          }
+        }
+      }
+
+      // ── @imgly in-browser ──
+      async function doImgly() {
+        if (!window._imglyRemove) {
+          toast("AI model not ready yet", "err");
+          return;
+        }
+        showProc(
+          "AI removing background…",
+          "Running neural network in your browser",
+        );
+        try {
+          const blob = await imgToBlob(S.orig);
+          const result = await window._imglyRemove(blob, {
+            model: "medium",
+            output: { format: "image/png", quality: 0.95 },
+            progress: (key, cur, tot) => {
+              const pct = tot > 0 ? Math.round((cur / tot) * 100) : 0;
+              setProc("AI processing…", `${pct}% complete`);
+              setProgress(pct);
+            },
+          });
+          const url = URL.createObjectURL(result);
+          const ni = new Image();
+          ni.onload = () => {
+            S.proc = ni;
+            hideProc();
+            renderCanvas();
+            updatePrint();
+            sok.style.display = "flex";
+            toast("Background removed ✓ (in-browser AI)");
+          };
+          ni.src = url;
+        } catch (err) {
+          hideProc();
+          console.error(err);
+          toast("In-browser AI error: " + err.message, "err");
+        }
+      }
+
+      function imgToBlob(img) {
+        return new Promise((res) => {
+          const c = document.createElement("canvas");
+          c.width = img.naturalWidth || img.width;
+          c.height = img.naturalHeight || img.height;
+          c.getContext("2d").drawImage(img, 0, 0);
+          c.toBlob(res, "image/png");
+        });
+      }
+
+      // ════════════════════════════════════════════
+      //  RESET
+      // ════════════════════════════════════════════
+      resetBtn.addEventListener("click", () => {
+        S.proc = null;
+        sok.style.display = "none";
+        renderCanvas();
+        updatePrint();
+        toast("Reset to original");
+      });
+
+      // ════════════════════════════════════════════
+      //  PRESETS / CUSTOM SIZE
+      // ════════════════════════════════════════════
+      document.querySelectorAll(".preset-btn").forEach((b) =>
+        b.addEventListener("click", () => {
+          document
+            .querySelectorAll(".preset-btn")
+            .forEach((x) => x.classList.remove("active"));
+          b.classList.add("active");
+          S.pw = parseFloat(b.dataset.w);
+          S.ph = parseFloat(b.dataset.h);
+          S.pname = b.dataset.name;
+          $("cW").value = S.pw;
+          $("cH").value = S.ph;
+          updateStats();
+          renderCanvas();
+          updatePrint();
+        }),
+      );
+      $("cW").addEventListener("input", (e) => {
+        S.pw = parseFloat(e.target.value) || 35;
+        document
+          .querySelectorAll(".preset-btn")
+          .forEach((x) => x.classList.remove("active"));
+        updateStats();
+        updatePrint();
+      });
+      $("cH").addEventListener("input", (e) => {
+        S.ph = parseFloat(e.target.value) || 45;
+        document
+          .querySelectorAll(".preset-btn")
+          .forEach((x) => x.classList.remove("active"));
+        updateStats();
+        updatePrint();
+      });
+
+      // ════════════════════════════════════════════
+      //  BG COLOR
+      // ════════════════════════════════════════════
+      document.querySelectorAll(".sw").forEach((s) =>
+        s.addEventListener("click", () => {
+          document
+            .querySelectorAll(".sw")
+            .forEach((x) => x.classList.remove("active"));
+          s.classList.add("active");
+          S.bg = s.dataset.c;
+          renderCanvas();
+          updatePrint();
+        }),
+      );
+      $("customBg").addEventListener("input", (e) => {
+        document
+          .querySelectorAll(".sw")
+          .forEach((x) => x.classList.remove("active"));
+        S.bg = e.target.value;
+        renderCanvas();
+        updatePrint();
+      });
+
+      // ════════════════════════════════════════════
+      //  COPIES / ADJUSTMENTS / TOGGLES / PAPER
+      // ════════════════════════════════════════════
+      copiesR.addEventListener("input", () => {
+        S.copies = parseInt(copiesR.value);
+        copiesN.textContent = S.copies;
+        updateStats();
+        updatePrint();
+      });
+
+      [
+        ["aBr", "br"],
+        ["aCo", "co"],
+        ["aSa", "sa"],
+        ["aSh", "sh"],
+      ].forEach(([id, k]) => {
+        const sl = $(id),
+          vl = $(id + "V");
+        sl.addEventListener("input", () => {
+          S[k] = parseInt(sl.value);
+          vl.textContent = sl.value;
+          renderCanvas();
+          updatePrint();
+        });
+      });
+      $("togC").addEventListener("change", (e) => {
+        S.center = e.target.checked;
+        renderCanvas();
+        updatePrint();
+      });
+      $("togB").addEventListener("change", (e) => {
+        S.border = e.target.checked;
+        updatePrint();
+      });
+      $("togG").addEventListener("change", (e) => {
+        S.guide = e.target.checked;
+      });
+
+      document.querySelectorAll(".paper-btn").forEach((b) =>
+        b.addEventListener("click", () => {
+          document
+            .querySelectorAll(".paper-btn")
+            .forEach((x) => x.classList.remove("active"));
+          b.classList.add("active");
+          S.paper = b.dataset.paper;
+          $("stP").textContent = S.paper;
+          updatePrint();
+        }),
+      );
+
+      // ════════════════════════════════════════════
+      //  STATS + PRINT PREVIEW
+      // ════════════════════════════════════════════
+      function updateStats() {
+        $("stC").textContent = S.copies;
+        $("stS").textContent = `${S.pw}×${S.ph}`;
+      }
+      updateStats();
+
+      function updatePrint() {
+        const img = S.proc || S.orig;
+        pg.innerHTML = "";
+        pi.textContent = "";
+        if (!img) {
+          pg.innerHTML =
+            '<div style="color:var(--tx3);font-size:11px;text-align:center;padding:18px;width:100%">Upload to see layout</div>';
+          return;
+        }
+        const sc = 2.2,
+          tw = Math.round(((S.pw * sc) / 3.7795) * 2),
+          th = Math.round(((S.ph * sc) / 3.7795) * 2);
+        for (let i = 0; i < S.copies; i++) {
+          const wrap = document.createElement("div");
+          wrap.className = "thumb-item";
+          wrap.style.width = tw + "px";
+          wrap.style.height = th + "px";
+          const tc = document.createElement("canvas");
+          tc.width = tw;
+          tc.height = th;
+          const ctx = tc.getContext("2d");
+          if (S.bg !== "transparent") {
+            ctx.fillStyle = S.bg;
+            ctx.fillRect(0, 0, tw, th);
+          }
+          ctx.filter = cssF();
+          drawCentered(ctx, img, tw, th);
+          ctx.filter = "none";
+          if (S.border) {
+            ctx.strokeStyle = "rgba(180,180,180,0.4)";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(0.5, 0.5, tw - 1, th - 1);
+          }
+          wrap.appendChild(tc);
+          pg.appendChild(wrap);
+        }
+        const [ppw, pph] = PAPER[S.paper],
+          pad = 10,
+          gap = 2;
+        const cols = Math.max(
+          1,
+          Math.floor((ppw - pad * 2 + gap) / (S.pw + gap)),
+        );
+        const rows = Math.max(
+          1,
+          Math.floor((pph - pad * 2 + gap) / (S.ph + gap)),
+        );
+        const per = cols * rows,
+          pages = Math.ceil(S.copies / per);
+        pi.textContent = `${cols}×${rows} grid · ${per}/page · ${pages} page${pages > 1 ? "s" : ""}`;
+        $("stC").textContent = S.copies;
+      }
+
+      // ════════════════════════════════════════════
+      //  DOWNLOAD PNG
+      // ════════════════════════════════════════════
+      dlBtn.addEventListener("click", () => {
+        const img = S.proc || S.orig;
+        if (!img) return;
+        const dpi = 300,
+          mpi = 25.4,
+          pw = Math.round((S.pw / mpi) * dpi),
+          ph = Math.round((S.ph / mpi) * dpi);
+        const c = document.createElement("canvas");
+        c.width = pw;
+        c.height = ph;
+        const ctx = c.getContext("2d");
+        if (S.bg !== "transparent") {
+          ctx.fillStyle = S.bg;
+          ctx.fillRect(0, 0, pw, ph);
+        }
+        ctx.filter = cssF();
+        drawCentered(ctx, img, pw, ph);
+        ctx.filter = "none";
+        c.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `photo_${S.pw}x${S.ph}mm_300dpi.png`;
+          a.click();
+          URL.revokeObjectURL(url);
+          toast("Downloaded at 300 DPI ✓");
+        }, "image/png");
+      });
+
+      // ════════════════════════════════════════════
+      //  GENERATE PDF
+      // ════════════════════════════════════════════
+      async function genPDF() {
+        const img = S.proc || S.orig;
+        if (!img) return toast("Upload a photo first", "err");
+        showProc("Building print sheet…", "Arranging photos at 300 DPI");
+        pdfBtn.disabled = true;
+        pdfBtn2.disabled = true;
+        await new Promise((r) => setTimeout(r, 30));
+        try {
+          const { jsPDF } = window.jspdf;
+          const [ppw, pph] = PAPER[S.paper];
+          const doc = new jsPDF({
+            orientation: ppw > pph ? "landscape" : "portrait",
+            unit: "mm",
+            format: [ppw, pph],
+          });
+          const dpi = 300,
+            mpi = 25.4,
+            pw2 = Math.round((S.pw / mpi) * dpi),
+            ph2 = Math.round((S.ph / mpi) * dpi);
+          const c = document.createElement("canvas");
+          c.width = pw2;
+          c.height = ph2;
+          const ctx = c.getContext("2d");
+          if (S.bg !== "transparent") {
+            ctx.fillStyle = S.bg;
+            ctx.fillRect(0, 0, pw2, ph2);
+          }
+          ctx.filter = cssF();
+          drawCentered(ctx, img, pw2, ph2);
+          ctx.filter = "none";
+          const dataUrl = c.toDataURL("image/jpeg", 0.95);
+          const pad = 8,
+            gap = 2;
+          const cols = Math.max(
+            1,
+            Math.floor((ppw - pad * 2 + gap) / (S.pw + gap)),
+          );
+          const rows = Math.max(
+            1,
+            Math.floor((pph - pad * 2 + gap) / (S.ph + gap)),
+          );
+          const per = cols * rows;
+          let placed = 0;
+          while (placed < S.copies) {
+            if (placed > 0 && placed % per === 0) doc.addPage();
+            const idx = placed % per,
+              col = idx % cols,
+              row = Math.floor(idx / cols);
+            const x = pad + col * (S.pw + gap),
+              y = pad + row * (S.ph + gap);
+            doc.addImage(dataUrl, "JPEG", x, y, S.pw, S.ph);
+            if (S.guide) {
+              doc.setDrawColor(170, 170, 170);
+              doc.setLineWidth(0.15);
+              doc.setLineDashPattern([1.2, 1.2], 0);
+              doc.rect(x, y, S.pw, S.ph);
+              doc.setLineDashPattern([], 0);
+            }
+            placed++;
+          }
+          doc.setPage(1);
+          doc.setFontSize(5.5);
+          doc.setTextColor(155, 155, 155);
+          doc.text(
+            `CHUCHI PHOTO STUDIO · ${S.pname} · ${S.pw}×${S.ph}mm · ${S.copies} copies · ${S.paper} · 300 DPI`,
+            ppw / 2,
+            pad / 2,
+            { align: "center" },
+          );
+          doc.save(`chuchi_${S.pw}x${S.ph}mm.pdf`);
+          toast(`PDF ready · ${Math.ceil(S.copies / per)} page(s) ✓`);
+        } catch (e) {
+          console.error(e);
+          toast("PDF error: " + e.message, "err");
+        }
+        hideProc();
+        pdfBtn.disabled = false;
+        pdfBtn2.disabled = false;
+      }
+      pdfBtn.addEventListener("click", genPDF);
+      pdfBtn2.addEventListener("click", genPDF);
+    </script>
+  </body>
+</html>
