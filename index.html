@@ -579,7 +579,7 @@
       }
       .stat {
         flex: 1;
-        padding: 8px 8px;
+        padding: 8px;
         border-right: 1px solid var(--bd);
         text-align: center;
       }
@@ -863,6 +863,13 @@
         border-color: rgba(217, 85, 85, 0.35);
         color: var(--rd);
       }
+      .sb,
+      .main {
+        animation: fadeUp 0.35s ease both;
+      }
+      .sb-right {
+        animation-delay: 0.08s;
+      }
       @keyframes fadeUp {
         from {
           opacity: 0;
@@ -873,12 +880,252 @@
           transform: translateY(0);
         }
       }
-      .sb,
-      .main {
-        animation: fadeUp 0.35s ease both;
+
+      /* ═══════════════════════════════════════
+         MOBILE TAB NAV — hidden on desktop
+      ═══════════════════════════════════════ */
+      .mob-tab-bar {
+        display: none;
       }
-      .sb-right {
-        animation-delay: 0.08s;
+
+      /* ═══════════════════════════════════════
+         MOBILE RESPONSIVE
+      ═══════════════════════════════════════ */
+      @media (max-width: 900px) {
+        html,
+        body {
+          overflow: auto;
+          height: auto;
+        }
+
+        body::after {
+          display: none;
+        } /* perf: skip noise on mobile */
+
+        /* Header shrink */
+        header {
+          height: 48px;
+          padding: 0 14px;
+          position: sticky;
+          top: 0;
+          z-index: 500;
+        }
+        .logo {
+          font-size: 20px;
+          letter-spacing: 4px;
+        }
+        .hbadge {
+          font-size: 8px;
+          padding: 4px 9px;
+          letter-spacing: 0.8px;
+        }
+
+        /* Kill the 3-col grid → single column */
+        .app {
+          display: flex;
+          flex-direction: column;
+          height: auto;
+          overflow: visible;
+          padding-bottom: 64px; /* space for tab bar */
+        }
+
+        /* Sidebars become full-width panels, hidden by default on mobile */
+        .sb {
+          width: 100%;
+          border: none;
+          padding: 14px;
+          gap: 12px;
+          display: none; /* JS shows active panel */
+          overflow-y: visible;
+        }
+        .sb.mob-active {
+          display: flex;
+        }
+
+        .sb-left {
+          border-right: none;
+          border-bottom: 1px solid var(--bd);
+        }
+        .sb-right {
+          border-left: none;
+          border-top: 1px solid var(--bd);
+        }
+
+        /* Main preview always visible */
+        .main {
+          min-height: 300px;
+          order: -1;
+          overflow: visible;
+        }
+        .preview-wrap {
+          max-width: 100%;
+          padding: 12px;
+        }
+        #prevCanvas {
+          max-height: 260px;
+        }
+        .tool-row {
+          flex-direction: row;
+        }
+        .tool-row .btn {
+          font-size: 12px;
+          padding: 10px 8px;
+        }
+
+        /* Presets grid 2-col stays, but tighter */
+        .presets-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 5px;
+        }
+        .preset-btn {
+          padding: 7px 8px;
+        }
+        .preset-name {
+          font-size: 10px;
+        }
+
+        /* Row2 stays 2-col */
+        .row2 {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        /* Adjustments: tighter labels */
+        .adj-lbl {
+          min-width: 58px;
+          font-size: 10px;
+        }
+
+        /* Print preview: shorter */
+        .print-scroll {
+          max-height: 150px;
+        }
+
+        /* Toast sits above tab bar */
+        .toast {
+          bottom: 72px;
+          font-size: 11px;
+          padding: 7px 14px;
+          white-space: normal;
+          max-width: calc(100vw - 32px);
+          text-align: center;
+        }
+
+        /* ── MOBILE BOTTOM TAB BAR ── */
+        .mob-tab-bar {
+          display: flex;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          z-index: 600;
+          height: 56px;
+          background: rgba(9, 9, 11, 0.97);
+          backdrop-filter: blur(16px);
+          border-top: 1px solid var(--bd2);
+        }
+        .mob-tab {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 2px;
+          cursor: pointer;
+          border: none;
+          background: none;
+          color: var(--tx3);
+          font-family: "DM Mono", monospace;
+          font-size: 8px;
+          letter-spacing: 0.8px;
+          text-transform: uppercase;
+          transition: color 0.2s;
+          padding: 6px 2px;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .mob-tab .mt-icon {
+          font-size: 17px;
+          line-height: 1;
+        }
+        .mob-tab.active {
+          color: var(--acc);
+        }
+        .mob-tab.active .mt-dot {
+          background: var(--acc);
+        }
+        .mt-dot {
+          width: 16px;
+          height: 2px;
+          border-radius: 1px;
+          background: transparent;
+          margin-top: 2px;
+          transition: background 0.2s;
+        }
+      }
+
+      @media (max-width: 480px) {
+        header {
+          padding: 0 12px;
+        }
+        .logo {
+          font-size: 18px;
+          letter-spacing: 3px;
+        }
+        .logo span {
+          font-size: 8px;
+          letter-spacing: 2px;
+        }
+        .hbadge {
+          display: none;
+        } /* too cramped on small phones */
+
+        .sb {
+          padding: 12px;
+          gap: 10px;
+        }
+
+        /* Single col presets on very small */
+        .presets-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .stats .stat-v {
+          font-size: 12px;
+        }
+
+        /* api panel header wraps cleanly */
+        .api-panel-hdr {
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+
+        /* bg swatches: allow wrap */
+        .bg-opts {
+          gap: 5px;
+        }
+        .sw,
+        .cpick {
+          width: 26px;
+          height: 26px;
+        }
+
+        .btn {
+          font-size: 12px;
+          padding: 10px;
+        }
+        .tool-row .btn {
+          font-size: 11px;
+        }
+
+        .empty h2 {
+          font-size: 22px;
+        }
+        .empty-icon {
+          font-size: 40px;
+        }
+
+        #prevCanvas {
+          max-height: 220px;
+        }
       }
     </style>
   </head>
@@ -887,9 +1134,10 @@
       <div class="logo">CHUCHI<span>PHOTO STUDIO</span></div>
       <div class="hbadge">AI BACKGROUND REMOVAL · FREE</div>
     </header>
+
     <div class="app">
       <!-- ═══ LEFT SIDEBAR ═══ -->
-      <aside class="sb sb-left">
+      <aside class="sb sb-left mob-active" id="panelLeft">
         <div>
           <div class="slabel">01 — Upload Photo</div>
           <div class="upload-zone" id="uploadZone">
@@ -900,7 +1148,6 @@
           </div>
         </div>
 
-        <!-- AI REMOVAL PANEL -->
         <div>
           <div class="slabel">02 — Background Removal</div>
           <div class="api-panel">
@@ -923,8 +1170,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- remove.bg panel — key is hardcoded, just show status -->
             <div id="removebgPanel">
               <div class="api-status">
                 <div class="api-dot ok" id="apiDot"></div>
@@ -936,8 +1181,6 @@
                 Powered by chuch.ai · Advanced AI background removal
               </div>
             </div>
-
-            <!-- In-browser panel -->
             <div id="imglyPanel" style="display: none">
               <div class="api-status" style="margin-top: 4px">
                 <div class="api-dot ld" id="imglyDot"></div>
@@ -960,7 +1203,6 @@
 
         <hr />
 
-        <!-- SIZE PRESETS -->
         <div>
           <div class="slabel">03 — Photo Size</div>
           <div class="presets-grid">
@@ -1043,17 +1285,16 @@
           <div class="slabel">Custom Size</div>
           <div class="row2">
             <div class="ig">
-              <label>Width (mm)</label>
-              <input type="number" id="cW" value="35" min="10" max="300" />
+              <label>Width (mm)</label
+              ><input type="number" id="cW" value="35" min="10" max="300" />
             </div>
             <div class="ig">
-              <label>Height (mm)</label>
-              <input type="number" id="cH" value="45" min="10" max="400" />
+              <label>Height (mm)</label
+              ><input type="number" id="cH" value="45" min="10" max="400" />
             </div>
           </div>
         </div>
 
-        <!-- BACKGROUND -->
         <div>
           <div class="slabel">04 — Background</div>
           <div class="bg-opts">
@@ -1074,7 +1315,6 @@
           </div>
         </div>
 
-        <!-- COPIES -->
         <div>
           <div class="slabel">05 — Copies</div>
           <div class="cpr">
@@ -1090,7 +1330,7 @@
         <div class="empty" id="emptyState">
           <div class="empty-icon">🎞</div>
           <h2>YOUR STUDIO</h2>
-          <p>Upload a photo · Remove background · Export PDF print sheet</p>
+          <p>Upload a photo · Remove background · Export PDF</p>
         </div>
         <div class="preview-wrap" id="previewWrap">
           <div class="pcard">
@@ -1125,7 +1365,7 @@
       </main>
 
       <!-- ═══ RIGHT SIDEBAR ═══ -->
-      <aside class="sb sb-right">
+      <aside class="sb sb-right" id="panelRight">
         <div>
           <div class="slabel">Stats</div>
           <div class="stats">
@@ -1146,74 +1386,70 @@
         <div>
           <div class="slabel">Adjustments</div>
           <div class="adj-row">
-            <span class="adj-lbl">Brightness</span>
-            <input
+            <span class="adj-lbl">Brightness</span
+            ><input
               type="range"
               class="adj-sl"
               id="aBr"
               min="50"
               max="150"
               value="100"
-            />
-            <span class="adj-v" id="aBrV">100</span>
+            /><span class="adj-v" id="aBrV">100</span>
           </div>
           <div class="adj-row">
-            <span class="adj-lbl">Contrast</span>
-            <input
+            <span class="adj-lbl">Contrast</span
+            ><input
               type="range"
               class="adj-sl"
               id="aCo"
               min="50"
               max="150"
               value="100"
-            />
-            <span class="adj-v" id="aCoV">100</span>
+            /><span class="adj-v" id="aCoV">100</span>
           </div>
           <div class="adj-row">
-            <span class="adj-lbl">Saturation</span>
-            <input
+            <span class="adj-lbl">Saturation</span
+            ><input
               type="range"
               class="adj-sl"
               id="aSa"
               min="0"
               max="200"
               value="100"
-            />
-            <span class="adj-v" id="aSaV">100</span>
+            /><span class="adj-v" id="aSaV">100</span>
           </div>
           <div class="adj-row">
-            <span class="adj-lbl">Sharpness</span>
-            <input
+            <span class="adj-lbl">Sharpness</span
+            ><input
               type="range"
               class="adj-sl"
               id="aSh"
               min="0"
               max="5"
               value="0"
-            />
-            <span class="adj-v" id="aShV">0</span>
+            /><span class="adj-v" id="aShV">0</span>
           </div>
         </div>
         <hr />
         <div>
           <div class="slabel">Smart Options</div>
           <div class="tog-row">
-            <span class="tog-lbl">Auto-center subject</span>
-            <label class="tog"
+            <span class="tog-lbl">Auto-center subject</span
+            ><label class="tog"
               ><input type="checkbox" id="togC" checked />
               <div class="tog-sl"></div
             ></label>
           </div>
           <div class="tog-row">
-            <span class="tog-lbl">Photo border</span>
-            <label class="tog"
+            <span class="tog-lbl">Photo border</span
+            ><label class="tog"
               ><input type="checkbox" id="togB" checked />
               <div class="tog-sl"></div
             ></label>
           </div>
           <div class="tog-row">
-            <span class="tog-lbl">Cut guidelines (PDF)</span>
-            <label class="tog"
+            <span class="tog-lbl">Cut guidelines (PDF)</span
+            ><label class="tog"
               ><input type="checkbox" id="togG" checked />
               <div class="tog-sl"></div
             ></label>
@@ -1256,12 +1492,28 @@
       </aside>
     </div>
 
+    <!-- MOBILE TAB BAR -->
+    <nav class="mob-tab-bar" id="mobTabBar">
+      <button class="mob-tab active" data-panel="left">
+        <span class="mt-icon">⚙️</span>
+        <span>Setup</span>
+        <div class="mt-dot"></div>
+      </button>
+      <button class="mob-tab" data-panel="preview">
+        <span class="mt-icon">🖼️</span>
+        <span>Preview</span>
+        <div class="mt-dot"></div>
+      </button>
+      <button class="mob-tab" data-panel="right">
+        <span class="mt-icon">🎨</span>
+        <span>Adjust</span>
+        <div class="mt-dot"></div>
+      </button>
+    </nav>
+
     <div class="toast" id="toast"></div>
 
     <script>
-      // ════════════════════════════════════════════
-      //  STATE
-      // ════════════════════════════════════════════
       const REMOVE_BG_API_KEY = "hrMJpLxZpb85XphEsNQ4SK7n";
 
       const S = {
@@ -1291,9 +1543,48 @@
       };
       const $ = (id) => document.getElementById(id);
 
-      // ════════════════════════════════════════════
-      //  TOAST
-      // ════════════════════════════════════════════
+      // ── MOBILE PANEL SWITCHING ──
+      function isMobile() {
+        return window.innerWidth <= 900;
+      }
+
+      document.querySelectorAll(".mob-tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          if (!isMobile()) return;
+          document
+            .querySelectorAll(".mob-tab")
+            .forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+          const panel = tab.dataset.panel;
+          // hide all panels
+          $("panelLeft").classList.remove("mob-active");
+          $("panelRight").classList.remove("mob-active");
+          document.querySelector(".main").style.display = "";
+          if (panel === "left") {
+            $("panelLeft").classList.add("mob-active");
+            document.querySelector(".main").style.display = "none";
+          } else if (panel === "right") {
+            $("panelRight").classList.add("mob-active");
+            document.querySelector(".main").style.display = "none";
+          } else {
+            // preview tab: show main, hide sidebars
+            document.querySelector(".main").style.display = "";
+          }
+        });
+      });
+
+      // On desktop, always show everything
+      window.addEventListener("resize", () => {
+        if (!isMobile()) {
+          $("panelLeft").classList.remove("mob-active");
+          $("panelRight").classList.remove("mob-active");
+          document.querySelector(".main").style.display = "";
+          $("panelLeft").style.display = "";
+          $("panelRight").style.display = "";
+        }
+      });
+
+      // ── TOAST ──
       let toastT;
       function toast(msg, type = "ok") {
         const el = $("toast");
@@ -1303,9 +1594,7 @@
         toastT = setTimeout(() => (el.className = "toast"), 3500);
       }
 
-      // ════════════════════════════════════════════
-      //  METHOD TABS
-      // ════════════════════════════════════════════
+      // ── METHOD TABS ──
       document.querySelectorAll(".api-tab").forEach((t) =>
         t.addEventListener("click", () => {
           document
@@ -1323,25 +1612,17 @@
 
       function checkRemoveBgReady() {
         const hasImg = !!S.orig;
-        if (S.method === "removebg")
-          removeBgBtn.disabled = !hasImg; // always ready — key is hardcoded
+        if (S.method === "removebg") removeBgBtn.disabled = !hasImg;
         else removeBgBtn.disabled = !(hasImg && S.imglyReady);
       }
 
-      // ════════════════════════════════════════════
-      //  @imgly/background-removal — loaded lazily
-      // ════════════════════════════════════════════
+      // ── @imgly ──
       let imglyLoadAttempted = false;
       function loadImgly() {
         if (imglyLoadAttempted) return;
         imglyLoadAttempted = true;
         setImglyStatus("ld", "Downloading AI model (~50 MB on first run)…");
-
-        const code = `
-    import { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/background-removal.mjs';
-    self.removeBackground = removeBackground;
-    self.postMessage({ type: 'ready' });
-  `;
+        const code = `import { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/background-removal.mjs';self.removeBackground=removeBackground;self.postMessage({type:'ready'});`;
         try {
           const blob = new Blob([code], { type: "application/javascript" });
           const url = URL.createObjectURL(blob);
@@ -1350,12 +1631,11 @@
             if (e.data.type === "ready") {
               window._imglyWorker = worker;
               initImglyMainThread();
-            } else if (e.data.type === "result") {
-              if (window._imglyResolve) window._imglyResolve(e.data.blob);
-            } else if (e.data.type === "error") {
-              if (window._imglyReject)
-                window._imglyReject(new Error(e.data.msg));
-            } else if (e.data.type === "progress") {
+            } else if (e.data.type === "result" && window._imglyResolve)
+              window._imglyResolve(e.data.blob);
+            else if (e.data.type === "error" && window._imglyReject)
+              window._imglyReject(new Error(e.data.msg));
+            else if (e.data.type === "progress") {
               const pct = e.data.pct;
               setProc("AI removing background…", `${pct}% complete`);
               setProgress(pct);
@@ -1369,13 +1649,13 @@
       }
 
       async function initImglyMainThread() {
-        const moduleCode = `
-    export { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/background-removal.mjs';
-  `;
         try {
-          const blob = new Blob([moduleCode], {
-            type: "application/javascript",
-          });
+          const blob = new Blob(
+            [
+              `export { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/background-removal.mjs';`,
+            ],
+            { type: "application/javascript" },
+          );
           const blobUrl = URL.createObjectURL(blob);
           const mod = await import(blobUrl);
           URL.revokeObjectURL(blobUrl);
@@ -1383,11 +1663,9 @@
           S.imglyReady = true;
           setImglyStatus("ok", "AI model ready · In-browser, no uploads");
           checkRemoveBgReady();
-          if (S.orig && S.method === "imgly") removeBgBtn.disabled = false;
           toast("AI model ready ✓");
         } catch (err) {
-          console.error("imgly load failed:", err);
-          setImglyStatus("er", "Load failed — see console for details");
+          setImglyStatus("er", "Load failed — see console");
           toast("In-browser AI failed to load. Use chuch.ai instead.", "err");
         }
       }
@@ -1398,9 +1676,7 @@
         $("imglyTxt").textContent = txt;
       }
 
-      // ════════════════════════════════════════════
-      //  UPLOAD
-      // ════════════════════════════════════════════
+      // ── UPLOAD ──
       const uploadZone = $("uploadZone"),
         fileInput = $("fileInput"),
         emptyState = $("emptyState"),
@@ -1460,15 +1736,25 @@
             pdfBtn2.disabled = false;
             checkRemoveBgReady();
             toast("Photo loaded ✓");
+            // Switch to preview tab on mobile
+            if (isMobile()) {
+              document
+                .querySelectorAll(".mob-tab")
+                .forEach((t) => t.classList.remove("active"));
+              document
+                .querySelector('[data-panel="preview"]')
+                .classList.add("active");
+              $("panelLeft").classList.remove("mob-active");
+              $("panelRight").classList.remove("mob-active");
+              document.querySelector(".main").style.display = "";
+            }
           };
           img.src = ev.target.result;
         };
         r.readAsDataURL(file);
       }
 
-      // ════════════════════════════════════════════
-      //  CANVAS RENDER
-      // ════════════════════════════════════════════
+      // ── CANVAS ──
       function cssF() {
         return `brightness(${S.br}%) contrast(${S.co}%) saturate(${S.sa}%)`;
       }
@@ -1514,9 +1800,7 @@
         ctx.filter = "none";
       }
 
-      // ════════════════════════════════════════════
-      //  PROCESSING OVERLAY
-      // ════════════════════════════════════════════
+      // ── PROCESSING OVERLAY ──
       function setProc(txt, sub = "") {
         procTxt.textContent = txt;
         procSub.textContent = sub;
@@ -1535,9 +1819,7 @@
         procOv.classList.remove("on");
       }
 
-      // ════════════════════════════════════════════
-      //  REMOVE BACKGROUND
-      // ════════════════════════════════════════════
+      // ── REMOVE BG ──
       removeBgBtn.addEventListener("click", async () => {
         if (!S.orig) return;
         removeBgBtn.disabled = true;
@@ -1546,24 +1828,18 @@
         checkRemoveBgReady();
       });
 
-      // ── remove.bg API (hardcoded key) ──
       async function doRemoveBg() {
-        showProc(
-          "Sending to CHUCH.AI",
-          "Remove backgrounds using advanced AI",
-        );
+        showProc("Sending to CHUCH.AI", "Remove backgrounds using advanced AI");
         try {
           const blob = await imgToBlob(S.orig);
           const fd = new FormData();
           fd.append("image_file", blob, "photo.png");
           fd.append("size", "auto");
-
           const res = await fetch("https://api.remove.bg/v1.0/removebg", {
             method: "POST",
             headers: { "X-Api-Key": REMOVE_BG_API_KEY },
             body: fd,
           });
-
           if (!res.ok) {
             const errText = await res.text();
             let msg = `API error ${res.status}`;
@@ -1572,7 +1848,6 @@
             } catch {}
             throw new Error(msg);
           }
-
           const resultBlob = await res.blob();
           const url = URL.createObjectURL(resultBlob);
           const ni = new Image();
@@ -1582,7 +1857,7 @@
             renderCanvas();
             updatePrint();
             sok.style.display = "flex";
-            toast("Background removed perfectly ✓ (chuch.ai)");
+            toast("Background removed ✓ (chuch.ai)");
           };
           ni.src = url;
         } catch (err) {
@@ -1593,25 +1868,22 @@
             err.message.includes("403") ||
             err.message.includes("Invalid") ||
             err.message.includes("Unauthorized")
-          ) {
+          )
             toast("API key error — check chuch.ai account", "err");
-          } else if (
+          else if (
             err.message.includes("402") ||
             err.message.includes("credit")
-          ) {
+          )
             toast("No credits left — account needs top-up at chuch.ai", "err");
-          } else if (
+          else if (
             err.message.includes("Failed to fetch") ||
             err.message.includes("NetworkError")
-          ) {
+          )
             toast("Network error — check your internet connection", "err");
-          } else {
-            toast("Error: " + err.message, "err");
-          }
+          else toast("Error: " + err.message, "err");
         }
       }
 
-      // ── @imgly in-browser ──
       async function doImgly() {
         if (!window._imglyRemove) {
           toast("AI model not ready yet", "err");
@@ -1660,9 +1932,7 @@
         });
       }
 
-      // ════════════════════════════════════════════
-      //  RESET
-      // ════════════════════════════════════════════
+      // ── RESET ──
       resetBtn.addEventListener("click", () => {
         S.proc = null;
         sok.style.display = "none";
@@ -1671,9 +1941,7 @@
         toast("Reset to original");
       });
 
-      // ════════════════════════════════════════════
-      //  PRESETS / CUSTOM SIZE
-      // ════════════════════════════════════════════
+      // ── PRESETS ──
       document.querySelectorAll(".preset-btn").forEach((b) =>
         b.addEventListener("click", () => {
           document
@@ -1707,9 +1975,7 @@
         updatePrint();
       });
 
-      // ════════════════════════════════════════════
-      //  BG COLOR
-      // ════════════════════════════════════════════
+      // ── BG COLOR ──
       document.querySelectorAll(".sw").forEach((s) =>
         s.addEventListener("click", () => {
           document
@@ -1730,16 +1996,13 @@
         updatePrint();
       });
 
-      // ════════════════════════════════════════════
-      //  COPIES / ADJUSTMENTS / TOGGLES / PAPER
-      // ════════════════════════════════════════════
+      // ── COPIES / ADJUSTMENTS ──
       copiesR.addEventListener("input", () => {
         S.copies = parseInt(copiesR.value);
         copiesN.textContent = S.copies;
         updateStats();
         updatePrint();
       });
-
       [
         ["aBr", "br"],
         ["aCo", "co"],
@@ -1780,9 +2043,7 @@
         }),
       );
 
-      // ════════════════════════════════════════════
-      //  STATS + PRINT PREVIEW
-      // ════════════════════════════════════════════
+      // ── STATS + PRINT ──
       function updateStats() {
         $("stC").textContent = S.copies;
         $("stS").textContent = `${S.pw}×${S.ph}`;
@@ -1842,9 +2103,7 @@
         $("stC").textContent = S.copies;
       }
 
-      // ════════════════════════════════════════════
-      //  DOWNLOAD PNG
-      // ════════════════════════════════════════════
+      // ── DOWNLOAD PNG ──
       dlBtn.addEventListener("click", () => {
         const img = S.proc || S.orig;
         if (!img) return;
@@ -1874,9 +2133,7 @@
         }, "image/png");
       });
 
-      // ════════════════════════════════════════════
-      //  GENERATE PDF
-      // ════════════════════════════════════════════
+      // ── PDF ──
       async function genPDF() {
         const img = S.proc || S.orig;
         if (!img) return toast("Upload a photo first", "err");
